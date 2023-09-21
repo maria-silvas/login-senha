@@ -1,17 +1,24 @@
 name: SecurityPipeline
 
-on: [push]
+on:
+  push:
+    branches:
+      - main  # Adjust to your desired branch
 
 jobs:
   horusec-security:
-    name: horusec-security
+    name: Horusec Security Scan
     runs-on: ubuntu-latest
+
     steps:
     - name: Check out code
       uses: actions/checkout@v3
-      with: # Necessário quando habilitado o autores de commit
+      with:
         fetch-depth: 0
-    - name: Running Horusec Security
+
+    - name: Install Horusec Security
       run: |
         curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec/main/deployments/scripts/install.sh | bash -s latest
-        horusec start -p="./" -e="false"        
+
+    - name: Run Horusec Security Scan
+      run: horusec start -p="./" -e="false"
