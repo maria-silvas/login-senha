@@ -1,4 +1,4 @@
-name: Horusec SAST
+name: Horusec Static Analysis
 
 on:
   push:
@@ -10,22 +10,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+    - name: Checkout code
+      uses: actions/checkout@v2
 
-      - name: Setup Go
-        uses: actions/setup-go@v2
-        with:
-          go-version: 1.17
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: '1.16'
 
-      - name: Install Horusec CLI
-        run: go install github.com/ZupIT/horusec-cli/cmd/horusec
+    - name: Install Horusec CLI
+      run: |
+        curl -fsSL https://raw.githubusercontent.com/ZupIT/horusec-cli/main/deployments/scripts/install.sh | bash
 
-      - name: Run Horusec SAST
-        run: horusec start -p . -r json -o horusec-report.json
-        
-      - name: Upload Horusec Report
-        uses: actions/upload-artifact@v2
-        with:
-          name: Horusec Report
-          path: horusec-report.json
+    - name: Run Horusec
+      run: horusec start -p="." -a
+
